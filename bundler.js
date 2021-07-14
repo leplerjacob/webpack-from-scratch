@@ -79,26 +79,26 @@ function bundle(graph) {
         function (require, module, exports) {
           ${mod.code}
         },
-        ${JSON.stringify(mod.mapping)}
-    ]`;
+        ${JSON.stringify(mod.mapping)},
+    ],`;
   });
 
-  // Create require function 
+  // Create require function
 
   const result = `
     (function(modules){
       function require(id) {
-        const [fn, mapping] = modules(id)
+        const [fn, mapping] = modules[id];
 
         function localRequire(relativePath) {
           return require(mapping[relativePath]);
         }
-        const module = { exports: {} }
+        const module = { exports: {} };
 
-        fn(localRequire, module, module.exports)
+        fn(localRequire, module, module.exports);
         return module.exports;
       }
-      require(0)
+      require(0);
     })({
       ${modules}
     })
@@ -106,6 +106,7 @@ function bundle(graph) {
 
   return result;
 }
+
 const graph = createGraph("./example/entry.js");
 const result = bundle(graph);
 console.log(result);
